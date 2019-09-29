@@ -9,6 +9,8 @@ import Plot
 class CDS:
 
     def __init__(self, p):
+        if not cal.isPrime(p):
+            raise Exception("P is not prime")
         self.__p = p
         self.__table = [[0 for j in range(p - 1)] for i in range(6)]
         self.fill_all_table()

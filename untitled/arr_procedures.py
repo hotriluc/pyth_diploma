@@ -1,6 +1,6 @@
 import itertools
-
 import numpy as np
+
 def print_2d_arr(aList):
 
     for row in aList:
@@ -44,6 +44,18 @@ def CyclicShiftRight(aList: list, steps: int):
    #return aList[pos:len(aList):]*0 + aList[0:pos:]
 
     #for i in range(1,len(aList)-1):
+
+#ansamles must contain same number of signals
+#USING WITH HADAMAR DISCRETE SIGNALS in order to get derivative signals
+def derivativeSig(ansamble_sig1:list,ansamble_sig2:list):
+    der_sig_list = []
+    for i in range(0, len(ansamble_sig1)):
+
+        tmp = np.array(ansamble_sig1[i]) * np.array(ansamble_sig2[i])
+        der_sig_list.append(tmp.tolist())
+
+    return der_sig_list
+
 
 
 
