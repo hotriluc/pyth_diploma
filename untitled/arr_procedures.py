@@ -8,6 +8,13 @@ def print_2d_arr(aList):
             print("{0:5d}".format(item),end="")
         print("")
 
+#print list of list(signals)
+def print_sig_in_list(aList):
+    i = 0
+    for item in aList:
+        print(i+1,") ",item)
+        i+=1
+
 #using simple pop and insert we created Shifting list with zeroing
 def ShiftRight(aList:list,steps:int):
         #for negative steps
@@ -56,7 +63,15 @@ def derivativeSig(ansamble_sig1:list,ansamble_sig2:list):
 
     return der_sig_list
 
+def derivativeSig2(ansamble_sig1:list,ansamble_sig2:list):
+    der_sig_list = []
+    i = 0
+    j = 0
+    for sig1 in ansamble_sig1:
+        for sig2 in ansamble_sig2:
+            der_sig_list.append(np.multiply(sig1, sig2).tolist())
 
+    return der_sig_list
 
 
 

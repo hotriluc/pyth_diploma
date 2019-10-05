@@ -187,9 +187,10 @@ def getMax(aList: list, start, end, abs_flag=False):
     return rmax, rmax_indx_list
 
 
-# E.g you have ansamble of signal and you want to know all correlation between all possible pairs
+# E.g you have ansamble of signal and you want to know all cross-correlation between all possible pairs
 # for derivative signals(with HADAMAR)
-def corel_btwn_pairs(list_with_signals: list, mode_name):
+# ONLY TO GET CROSS CORRELATION
+def cross_corel_btwn_pairs(list_with_signals: list, mode_name):
     aList = list()
     for pair in itertools.combinations(list_with_signals, 2):
         a_sig, b_sig = pair
@@ -202,12 +203,27 @@ def corel_btwn_pairs(list_with_signals: list, mode_name):
         aList.append(r)
     return aList
 
+#Having list with signals
+#getting list of list with signals' pereodic/apereodic correlation function
+def auto_corel_all(list_with_signals:list,mode_name):
+    aList = list()
+    sig_num_list = list()
+
+    for item in list_with_signals:
+        if mode_name == "PFAK":
+            r = getCorellation(item, item)
+        if mode_name == "AFAK":
+            r = getCorellation(item, item, True)
+
+        aList.append(r)
+
+    return aList
 
 # ishodni signal i drugie signali
 # getting list of correlations of all signals
-def corel_source_and_rest(source_sig, slist_with_signals: list, mode_name):
+def corel_source_and_rest(source_sig, list_with_signals: list, mode_name):
     aList = list()
-    for item in slist_with_signals:
+    for item in list_with_signals:
         if mode_name == "PFVK":
             r = getCorellation(source_sig, item)
         if mode_name == "AFVK":
@@ -257,18 +273,26 @@ def getSTD(aList,start,end,abs_flag=False):
 # Calculate stats for each corel_list in ansamble
 # abs_flag==false then statistics for all value(included positive and negative sign)
 # abs_flag==true statistics for absolute values(По модулю)
-def printFullStat(ansamble_of_corel_list:list,start,end,abs_flag=False):
+def printFullStat(ansamble_of_corel_list:list,start,end,abs_flag=False,list_of_num=None):
     avg_list = list()
     var_list = list()
     std_list = list()
     x_list = list()
     p = 0
+    i = 0
     if abs_flag==True:
         print("=====ABSOLUTE=====")
-        print("%-10s %-10s %-10s %-10s" % ("X\t","AVG\t", "VAR\t", "STD\t"))
+        if list_of_num:
+            print("%-10s %-10s %-10s %-10s %-10s" % ("#\t","X\t", "AVG\t", "VAR\t", "STD\t"))
+        else:
+            print("%-10s %-10s %-10s %-10s" % ("X\t", "AVG\t", "VAR\t", "STD\t"))
     else:
         print("=======ALL=======")
-        print("%-10s %-10s %-10s %-10s" % ("X\t","AVG\t", "VAR\t", "STD\t"))
+        if list_of_num:
+            print("%-10s %-10s %-10s %-10s %-10s" % ("#\t", "X\t", "AVG\t", "VAR\t", "STD\t"))
+        else:
+            print("%-10s %-10s %-10s %-10s" % ("X\t", "AVG\t", "VAR\t", "STD\t"))
+
     for item in ansamble_of_corel_list:
         #print(item)
         p = len(item)
@@ -282,7 +306,11 @@ def printFullStat(ansamble_of_corel_list:list,start,end,abs_flag=False):
         var_list.append(VAR)
         std_list.append(STD)
 
-        print("{0:5f}\t {1:5f}\t {2:5f}\t {3:5f}\t".format(X[0]/math.sqrt(p), AVG / math.sqrt(p), VAR / math.sqrt(p), STD / math.sqrt(p)))
+        if list_of_num:
+            print("{0}\t\t\t {1:5f}\t {2:5f}\t {3:5f}\t {4:5f}\t".format(list_of_num[i], X[0]/math.sqrt(p), AVG / math.sqrt(p), VAR / math.sqrt(p), STD / math.sqrt(p)))
+            i+=1
+        else:
+            print("{0:5f}\t {1:5f}\t {2:5f}\t {3:5f}\t".format(X[0]/math.sqrt(p), AVG / math.sqrt(p), VAR / math.sqrt(p), STD / math.sqrt(p)))
 
 
     print("____________________________")
