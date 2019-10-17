@@ -203,9 +203,24 @@ def cross_corel_btwn_pairs(list_with_signals: list, mode_name):
         aList.append(r)
     return aList
 
-#Having list with signals
-#getting list of list with signals' pereodic/apereodic correlation function
-def auto_corel_all(list_with_signals:list,mode_name):
+
+def cross_corel_btwn_pairs2(list_with_signals: list, pair_list: list, mode_name):
+    aList = list()
+    for x, y in pair_list:
+
+        # print(pair)
+        if mode_name == "PFVK":
+            r = getCorellation(list_with_signals[x], list_with_signals[y])
+        if mode_name == "AFVK":
+            r = getCorellation(list_with_signals[x], list_with_signals[y], True)
+
+        aList.append(r)
+    return aList
+
+
+# Having list with signals
+# getting list of list with signals' pereodic/apereodic correlation function
+def auto_corel_all(list_with_signals: list, mode_name):
     aList = list()
     sig_num_list = list()
 
@@ -218,6 +233,7 @@ def auto_corel_all(list_with_signals:list,mode_name):
         aList.append(r)
 
     return aList
+
 
 # ishodni signal i drugie signali
 # getting list of correlations of all signals
@@ -238,52 +254,58 @@ def corel_source_and_rest(source_sig, list_with_signals: list, mode_name):
     return aList
 
 
-def printPair(list_with_signals: list):
-    for pair in itertools.combinations(list_with_signals, 2):
-        print(pair)
+def getPair(list_with_count_of_sigs: list):
+    pair_list = []
+    for pair in itertools.combinations(list_with_count_of_sigs, 2):
+        # print(pair)
+        pair_list.append(pair)
+    return pair_list
 
 
 # getting Average(mean) of the list
 # abs_flag==false then AVG for all value(included positive and negative sign)(для всех значений)
 # abs_flag==true AVG for absolute values(По модулю)
-def getAVG(aList, start, end,abs_flag=False):
+def getAVG(aList, start, end, abs_flag=False):
     if abs_flag == True:
         abs_list = [abs(x) for x in aList]
         return np.mean(abs_list[start:end])
     return np.mean(aList[start:end])
 
+
 # getting Dispersion(varience) of the list
 # abs_flag==false then VAR for all value(included positive and negative sign)
 # abs_flag==true VAR for absolute values(По модулю)
-def getVAR(aList, start, end,abs_flag=False):
+def getVAR(aList, start, end, abs_flag=False):
     if abs_flag == True:
         abs_list = [abs(x) for x in aList]
         return np.var(abs_list[start:end])
     return np.var(aList[start:end])
 
+
 # getting Standert Deviation(std) of the list
 # abs_flag==false then STD for all value(included positive and negative sign)
 # abs_flag==true STD for absolute values(По модулю)
-def getSTD(aList,start,end,abs_flag=False):
+def getSTD(aList, start, end, abs_flag=False):
     if abs_flag == True:
         abs_list = [abs(x) for x in aList]
         return np.std(abs_list[start:end])
     return np.std(aList[start:end])
 
+
 # Calculate stats for each corel_list in ansamble
 # abs_flag==false then statistics for all value(included positive and negative sign)
 # abs_flag==true statistics for absolute values(По модулю)
-def printFullStat(ansamble_of_corel_list:list,start,end,abs_flag=False,list_of_num=None):
+def printFullStat(ansamble_of_corel_list: list, start, end, abs_flag=False, list_of_num=None):
     avg_list = list()
     var_list = list()
     std_list = list()
     x_list = list()
     p = 0
     i = 0
-    if abs_flag==True:
+    if abs_flag == True:
         print("=====ABSOLUTE=====")
         if list_of_num:
-            print("%-10s %-10s %-10s %-10s %-10s" % ("#\t","X\t", "AVG\t", "VAR\t", "STD\t"))
+            print("%-10s %-10s %-10s %-10s %-10s" % ("#\t", "X\t", "AVG\t", "VAR\t", "STD\t"))
         else:
             print("%-10s %-10s %-10s %-10s" % ("X\t", "AVG\t", "VAR\t", "STD\t"))
     else:
@@ -294,9 +316,9 @@ def printFullStat(ansamble_of_corel_list:list,start,end,abs_flag=False,list_of_n
             print("%-10s %-10s %-10s %-10s" % ("X\t", "AVG\t", "VAR\t", "STD\t"))
 
     for item in ansamble_of_corel_list:
-        #print(item)
+        # print(item)
         p = len(item)
-        X = getMax(item,start,end,abs_flag)
+        X = getMax(item, start, end, abs_flag)
         AVG = getAVG(item, start, end, abs_flag)
         VAR = getVAR(item, start, end, abs_flag)
         STD = getSTD(item, start, end, abs_flag)
@@ -307,12 +329,17 @@ def printFullStat(ansamble_of_corel_list:list,start,end,abs_flag=False,list_of_n
         std_list.append(STD)
 
         if list_of_num:
-            print("{0}\t\t\t {1:5f}\t {2:5f}\t {3:5f}\t {4:5f}\t".format(list_of_num[i], X[0]/math.sqrt(p), AVG / math.sqrt(p), VAR / math.sqrt(p), STD / math.sqrt(p)))
-            i+=1
+            print("{0}\t\t {1:5f}\t {2:5f}\t {3:5f}\t {4:5f}\t".format(list_of_num[i], X[0] / math.sqrt(p),
+                                                                         AVG / math.sqrt(p), VAR / math.sqrt(p),
+                                                                         STD / math.sqrt(p)))
+            i += 1
         else:
-            print("{0:5f}\t {1:5f}\t {2:5f}\t {3:5f}\t".format(X[0]/math.sqrt(p), AVG / math.sqrt(p), VAR / math.sqrt(p), STD / math.sqrt(p)))
+            print("{0:5f}\t {1:5f}\t {2:5f}\t {3:5f}\t".format(X[0] / math.sqrt(p), AVG / math.sqrt(p),
+                                                               VAR / math.sqrt(p), STD / math.sqrt(p)))
 
-
-    print("____________________________")
-    print("{0:5f}\t {1:5f}\t {2:5f}\t {3:5f}\t".format(np.mean(x_list)/ math.sqrt(p), np.mean(avg_list) / math.sqrt(p),
-                                                       np.mean(var_list)/ math.sqrt(p), np.mean(std_list) / math.sqrt(p)))
+    print("____________________________"*2)
+    print("X = {0:5f}\tAVG = {1:5f}\tVAR = {2:5f}\tSTD = {3:5f}".format(np.mean(x_list) / math.sqrt(p),
+                                                                            np.mean(avg_list) / math.sqrt(p),
+                                                                            np.mean(var_list) / math.sqrt(p),
+                                                                            np.mean(std_list) / math.sqrt(p)))
+    print("____________________________"*2,"\n")
