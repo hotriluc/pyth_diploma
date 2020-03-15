@@ -70,6 +70,25 @@ class CryptoSignal:
             tmp_list.append(self.generateDefRandomSeq(ifrmax))
         return tmp_list
 
+    # 0 ot centralnogo pika
+    def genereteAnsambleOfCryptoSig_zero(self, n, ifrmax):
+        tmp_list = []
+        cnt = 0
+        while (cnt != n):
+
+            arr = self.generateDefRandomSeq(ifrmax)
+            corel_list = cal.getCorellation(arr, arr)
+
+            if (corel_list[1] == 0 and corel_list[2] == 0 and corel_list[3] == 0):
+                print("FOUND")
+                tmp_list.append(arr)
+                cnt+=1
+
+
+
+
+
+        return tmp_list
 
 if __name__ == "__main__":
     p=2048

@@ -183,3 +183,5 @@ if __name__ == "__main__":
     print("\nAFAK")
     cal.printFullStat(ansamble_of_apereodic_auto_corel_list, 1, p-1, True)
     cal.printFullStat(ansamble_of_apereodic_auto_corel_list, 1, p-1)
+
+

@@ -219,7 +219,7 @@ def cross_corel_btwn_pairs2(list_with_signals: list, pair_list: list, mode_name)
 
 
 # Having list with signals
-# getting list of list with signals' pereodic/apereodic correlation function
+# getting list of list with signals' pereodic/apereodic auto correlation function
 def auto_corel_all(list_with_signals: list, mode_name):
     aList = list()
     sig_num_list = list()
@@ -295,6 +295,7 @@ def getSTD(aList, start, end, abs_flag=False):
 # Calculate stats for each corel_list in ansamble
 # abs_flag==false then statistics for all value(included positive and negative sign)
 # abs_flag==true statistics for absolute values(По модулю)
+# List of num var for consists combination of signals
 def printFullStat(ansamble_of_corel_list: list, start, end, abs_flag=False, list_of_num=None):
     avg_list = list()
     var_list = list()

@@ -28,6 +28,7 @@ if __name__ =="__main__":
     cal.printFullStat(asnsam_pfak_list, 1, p - 1, True, sig_num)
     cal.printFullStat(asnsam_pfak_list, 1, p - 1, list_of_num=sig_num)
 
+    # Подсчт пар
     pair_list_cryptosig = cal.getPair([i for i in range(0, len(crypto_sig_ansam))])
     print("\nPFVK CRYPTOGRAPHIC SIGNALS")
     pfvk_cryptosig_list = cal.cross_corel_btwn_pairs(crypto_sig_ansam, "PFVK")
