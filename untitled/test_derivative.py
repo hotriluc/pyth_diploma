@@ -35,13 +35,17 @@ if __name__ =="__main__":
     cal.printFullStat(pfvk_cryptosig_list, 0, p, True, list_of_num=pair_list_cryptosig)
     cal.printFullStat(pfvk_cryptosig_list, 0, p, list_of_num=pair_list_cryptosig)
 
+    #derivative
     dersig, combinations = derivativeSigFromTo(crypto_sig_ansam, hadamar_sig_list,1,3)
     for i in range(0,len(dersig)):
+
         print("CS#{0} and HADAMAR#{1}".format(combinations[i][0],combinations[i][1]))
         print(dersig[i])
 
     pair_list_derivative = cal.getPair([i for i in range(0, len(dersig))])
+
     print("\nPFVK DERIVATIVE SIGNALS")
+    
     pfvk_corel_list = cal.cross_corel_btwn_pairs2(dersig, pair_list_derivative, "PFVK")
     cal.printFullStat(pfvk_corel_list, 0, p, True, pair_list_derivative)
     cal.printFullStat(pfvk_corel_list, 0, p, False, pair_list_derivative)

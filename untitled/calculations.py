@@ -5,6 +5,7 @@ import numpy as np
 import arr_procedures as ap
 import copy
 from sympy import primefactors
+from scipy.stats import kurtosis
 
 
 # coprimes for modulo is supposed to be from 1..n-1 (e.g. for 13 is 1,2,3,.12)
@@ -204,6 +205,7 @@ def cross_corel_btwn_pairs(list_with_signals: list, mode_name):
     return aList
 
 
+# w/o itertools
 def cross_corel_btwn_pairs2(list_with_signals: list, pair_list: list, mode_name):
     aList = list()
     for x, y in pair_list:
@@ -235,7 +237,7 @@ def auto_corel_all(list_with_signals: list, mode_name):
     return aList
 
 
-# ishodni signal i drugie signali
+# исходный сигнал с другими сигналами
 # getting list of correlations of all signals
 def corel_source_and_rest(source_sig, list_with_signals: list, mode_name):
     aList = list()
@@ -291,6 +293,11 @@ def getSTD(aList, start, end, abs_flag=False):
         return np.std(abs_list[start:end])
     return np.std(aList[start:end])
 
+def getKurtosis(aList, start, end, abs_flag=False):
+    if abs_flag == True:
+        abs_list = [abs(x) for x in aList]
+        return kurtosis(abs_list)
+    return kurtosis(aList)
 
 # Calculate stats for each corel_list in ansamble
 # abs_flag==false then statistics for all value(included positive and negative sign)
@@ -301,20 +308,21 @@ def printFullStat(ansamble_of_corel_list: list, start, end, abs_flag=False, list
     var_list = list()
     std_list = list()
     x_list = list()
+    kurtosis_list = list()
     p = 0
     i = 0
     if abs_flag == True:
         print("=====ABSOLUTE=====")
         if list_of_num:
-            print("%-10s %-10s %-10s %-10s %-10s" % ("#\t", "X\t", "AVG\t", "VAR\t", "STD\t"))
+            print("%-10s %-10s %-10s %-10s %-10s %-10s" % ("#\t", "X\t", "AVG\t", "VAR\t", "STD\t", "KURTOSIS\t"))
         else:
-            print("%-10s %-10s %-10s %-10s" % ("X\t", "AVG\t", "VAR\t", "STD\t"))
+            print("%-10s %-10s %-10s %-10s %-10s" % ("X\t", "AVG\t", "VAR\t", "STD\t", "KURTOSIS\t"))
     else:
         print("=======ALL=======")
         if list_of_num:
-            print("%-10s %-10s %-10s %-10s %-10s" % ("#\t", "X\t", "AVG\t", "VAR\t", "STD\t"))
+            print("%-10s %-10s %-10s %-10s %-10s %-10s" % ("#\t", "X\t", "AVG\t", "VAR\t", "STD\t", "KURTOSIS\t"))
         else:
-            print("%-10s %-10s %-10s %-10s" % ("X\t", "AVG\t", "VAR\t", "STD\t"))
+            print("%-10s %-10s %-10s %-10s %-10s" % ("X\t", "AVG\t", "VAR\t", "STD\t", "KURTOSIS\t"))
 
     for item in ansamble_of_corel_list:
         # print(item)
@@ -323,24 +331,26 @@ def printFullStat(ansamble_of_corel_list: list, start, end, abs_flag=False, list
         AVG = getAVG(item, start, end, abs_flag)
         VAR = getVAR(item, start, end, abs_flag)
         STD = getSTD(item, start, end, abs_flag)
-
+        KURTOSIS = getKurtosis(item,start,end,abs_flag)
         x_list.append(X[0])
         avg_list.append(AVG)
         var_list.append(VAR)
         std_list.append(STD)
+        kurtosis_list.append(KURTOSIS)
 
         if list_of_num:
-            print("{0}\t\t {1:5f}\t {2:5f}\t {3:5f}\t {4:5f}\t".format(list_of_num[i], X[0] / math.sqrt(p),
+            print("{0}\t\t {1:5f}\t {2:5f}\t {3:5f}\t {4:5f}\t {5:5f}\t".format(list_of_num[i], X[0] / math.sqrt(p),
                                                                          AVG / math.sqrt(p), VAR / math.sqrt(p),
-                                                                         STD / math.sqrt(p)))
+                                                                         STD / math.sqrt(p), KURTOSIS / math.sqrt(p)))
             i += 1
         else:
-            print("{0:5f}\t {1:5f}\t {2:5f}\t {3:5f}\t".format(X[0] / math.sqrt(p), AVG / math.sqrt(p),
-                                                               VAR / math.sqrt(p), STD / math.sqrt(p)))
+            print("{0:5f}\t {1:5f}\t {2:5f}\t {3:5f}\t {4:5f}\t ".format(X[0] / math.sqrt(p), AVG / math.sqrt(p),
+                                                               VAR / math.sqrt(p), STD / math.sqrt(p), KURTOSIS / math.sqrt(p)))
 
     print("____________________________"*2)
-    print("X = {0:5f}\tAVG = {1:5f}\tVAR = {2:5f}\tSTD = {3:5f}".format(np.mean(x_list) / math.sqrt(p),
+    print("X = {0:5f}\tAVG = {1:5f}\tVAR = {2:5f}\tSTD = {3:5f}\tKURTOSIS = {4:5f}".format(np.mean(x_list) / math.sqrt(p),
                                                                             np.mean(avg_list) / math.sqrt(p),
                                                                             np.mean(var_list) / math.sqrt(p),
-                                                                            np.mean(std_list) / math.sqrt(p)))
+                                                                            np.mean(std_list) / math.sqrt(p),
+                                                                            np.mean(kurtosis_list) / math.sqrt(p)))
     print("____________________________"*2,"\n")
