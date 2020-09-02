@@ -1,3 +1,4 @@
+import modules.arr_procedures
 from modules import arr_procedures as ap, calculations as cal
 from classes.CDS import CDS
 from classes.Hadamar import Hadamar
@@ -41,9 +42,11 @@ if  __name__=="__main__":
     # Подсчт пар
     pair_list_cryptosig = cal.getPair([i for i in range(0, len(slice_of_b))])
     print("\nPFVK CDS SIGNALS")
-    pfvk_cryptosig_list = cal.cross_corel_btwn_pairs(slice_of_b, "PFVK")
-    cal.printFullStat(pfvk_cryptosig_list, 0, p, True, list_of_num=pair_list_cryptosig)
-    cal.printFullStat(pfvk_cryptosig_list, 0, p, list_of_num=pair_list_cryptosig)
+    # pfvk_cryptosig_list = cal.cross_corel_btwn_pairs(slice_of_b, "PFVK")
+    # cal.printFullStat(pfvk_cryptosig_list, 0, p, True, list_of_num=pair_list_cryptosig)
+    # cal.printFullStat(pfvk_cryptosig_list, 0, p, list_of_num=pair_list_cryptosig)
+    pfvk_stat = modules.arr_procedures.ansamble_correlation('PFVK')
+    pfvk_stat(slice_of_b)
 
     # derivative
     dersig, combinations = ap.derivativeSigFromTo(slice_of_b, hadamar_sig_list, 1, 3)
@@ -53,8 +56,10 @@ if  __name__=="__main__":
 
 
     print("\nPFVK DERIVATIVE SIGNALS")
-    pair_list_derivative = cal.getPair([i for i in range(0, len(dersig))])
-    pfvk_corel_list = cal.cross_corel_btwn_pairs2(dersig, pair_list_derivative, "PFVK")
-    cal.printFullStat(pfvk_corel_list, 0, p, True, pair_list_derivative)
-    cal.printFullStat(pfvk_corel_list, 0, p, False, pair_list_derivative)
+    # pair_list_derivative = cal.getPair([i for i in range(0, len(dersig))])
+    # pfvk_corel_list = cal.cross_corel_btwn_pairs2(dersig, pair_list_derivative, "PFVK")
+    # cal.printFullStat(pfvk_corel_list, 0, p, True, pair_list_derivative)
+    # cal.printFullStat(pfvk_corel_list, 0, p, False, pair_list_derivative)
+    pfvk_stat(dersig)
+
 

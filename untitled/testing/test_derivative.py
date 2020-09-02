@@ -1,3 +1,4 @@
+import modules.arr_procedures
 from classes.Hadamar import Hadamar
 from classes.CryptoSignal import CryptoSignal
 from modules.arr_procedures import print_sig_in_list, derivativeSigFromTo
@@ -27,14 +28,14 @@ if __name__ =="__main__":
     sig_num = [i for i in range(0, len(crypto_sig_ansam))]
 
     print("\nPFAK CRYPTOGRAPHIC SIGNALS")
-    asnsam_pfak_list = cal.auto_corel_all(crypto_sig_ansam, "PFAK")
+    asnsam_pfak_list = modules.arr_procedures.auto_corel_all(crypto_sig_ansam, "PFAK")
     cal.printFullStat(asnsam_pfak_list, 1, p - 1, True, sig_num)
     cal.printFullStat(asnsam_pfak_list, 1, p - 1, list_of_num=sig_num)
 
     # Pairs of signal combinations (used only for output in printFullStat)
     pair_list_cryptosig = cal.getPair([i for i in range(0, len(crypto_sig_ansam))])
     print("\nPFVK CRYPTOGRAPHIC SIGNALS")
-    pfvk_cryptosig_list = cal.cross_corel_btwn_pairs(crypto_sig_ansam, "PFVK")
+    pfvk_cryptosig_list = modules.arr_procedures.cross_corel_btwn_pairs(crypto_sig_ansam, "PFVK")
     cal.printFullStat(pfvk_cryptosig_list, 0, p, True, list_of_num=pair_list_cryptosig)
     cal.printFullStat(pfvk_cryptosig_list, 0, p, list_of_num=pair_list_cryptosig)
 
@@ -49,6 +50,6 @@ if __name__ =="__main__":
 
     print("\nPFVK DERIVATIVE SIGNALS")
     
-    pfvk_corel_list = cal.cross_corel_btwn_pairs2(dersig, pair_list_derivative, "PFVK")
+    pfvk_corel_list = modules.arr_procedures.cross_corel_btwn_pairs2(dersig, pair_list_derivative, "PFVK")
     cal.printFullStat(pfvk_corel_list, 0, p, True, pair_list_derivative)
     cal.printFullStat(pfvk_corel_list, 0, p, False, pair_list_derivative)

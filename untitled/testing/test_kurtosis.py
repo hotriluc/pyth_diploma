@@ -1,5 +1,7 @@
 from scipy.stats import kurtosis
 from scipy.stats import moment
+
+import modules.arr_procedures
 from classes.Hadamar import Hadamar
 import numpy as np
 from modules import calculations as cal
@@ -14,7 +16,7 @@ if __name__=="__main__":
     for i in range(p-50,p):
         print(i,") ",hadamar_sig_list[i].tolist())
 
-    hadamar_pfvk_list = cal.cross_corel_btwn_pairs(hadamar_sig_list[p-10:p].tolist(),"PFVK")
+    hadamar_pfvk_list = modules.arr_procedures.cross_corel_btwn_pairs(hadamar_sig_list[p - 10:p].tolist(), "PFVK")
 
     cal.printFullStat(hadamar_pfvk_list,0,p)
     cal.printFullStat(hadamar_pfvk_list, 0, p,True)
@@ -26,7 +28,6 @@ if __name__=="__main__":
     a =[0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
 
     print(kurtosis(a)/math.sqrt(p))
-
 
 
 

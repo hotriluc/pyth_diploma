@@ -1,4 +1,6 @@
 import secrets
+
+import modules.arr_procedures
 from modules import calculations as cal
 
 
@@ -36,7 +38,7 @@ class CryptoSignal:
         while True:
             sig = self.generateRandomSeq()
             # Getting PFAK
-            corel_list = cal.getCorellation(sig, sig)
+            corel_list = modules.arr_procedures.getCorellation(sig, sig)
             rmax = cal.getMax(corel_list, 1, self.__P - 1, True)
             if rmax[0] <= if_rmax:
                 return sig
@@ -55,7 +57,7 @@ class CryptoSignal:
 
             sig = self.generateRandomSeq()
             # Getting PFAK
-            corel_list = cal.getCorellation(sig, sig)
+            corel_list = modules.arr_procedures.getCorellation(sig, sig)
             rmax = cal.getMax(corel_list, 1, self.__P - 1, True)
             if rmax[0] <= if_rmax:
                 print(if_rmax)
@@ -77,7 +79,7 @@ class CryptoSignal:
         while (cnt != n):
 
             arr = self.generateDefRandomSeq(ifrmax)
-            corel_list = cal.getCorellation(arr, arr)
+            corel_list = modules.arr_procedures.getCorellation(arr, arr)
 
             if (corel_list[1] == 0 and corel_list[2] == 0 and corel_list[3] == 0):
                 print("FOUND")
@@ -107,7 +109,7 @@ if __name__ == "__main__":
     print(ansam)
 
     # getting all pfvks
-    asnsam_pfvk_list = cal.cross_corel_btwn_pairs(ansam, "PFVK")
+    asnsam_pfvk_list = modules.arr_procedures.cross_corel_btwn_pairs(ansam, "PFVK")
     # calculate stat for pfaks
     cal.printFullStat(asnsam_pfvk_list, 0, p, True)
     cal.printFullStat(asnsam_pfvk_list, 0, p)

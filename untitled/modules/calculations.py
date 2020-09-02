@@ -2,8 +2,6 @@ import itertools
 import math
 import math as m
 import numpy as np
-from modules import arr_procedures as ap
-import copy
 from sympy import primefactors
 from scipy.stats import kurtosis
 
@@ -12,6 +10,7 @@ from scipy.stats import kurtosis
 # checking all g^p mod modulo from where g,p = 1..n-1 and adding to temporary list
 # if tmp_list equals to required then we mark(add) g as primitive root
 # !!!modulo argument is INTEGER!!!
+
 def prim_roots(modulo):
     required_set = {num for num in range(1, modulo) if m.gcd(num, modulo)}
     return [g for g in range(1, modulo) if required_set == {pow(g, powers, modulo)
@@ -128,73 +127,6 @@ def coprimes(n):
     return num_coprimes, coprime_list
 
 
-def decimation(a_List: list, b_List: list, d: int):
-    for i in range(0, len(a_List)):
-        pos = (d + d * i) % len(a_List)
-        b_List[i] = a_List[pos]
-
-def getDecimation(source_signal):
-   #getting source singal length
-    sig_len = len(source_signal)
-    # Copy source signal (in order to not interfere source signal)
-    sig1_ = copy.deepcopy(source_signal)
-    # Creating list for storing signals
-    decimation_list = list()
-
-    #Geting coprimes of sign len e.g len=  256 coprimes = [1,3,5,7 ... 255]
-    # index 1 because of coprimes method return tuple of 2element
-    # (the number of total coprimes, and list of coprimes)
-    #
-    coprime_list = coprimes(sig_len)[1]
-
-    # For each coprime of source signal length we will create a signal using decimation
-    for i in range(len(coprime_list)):
-        # tmp for signal we are going to get with decimation
-        sig2_ = [0 for i in range(sig_len)]
-
-        # creating rest signals with decimation
-        decimation(sig1_, sig2_, coprime_list[i])
-
-        # appending decimation_list with list
-        # that contains decimated sig and
-        # decimation coefficient that used to create that sig
-        decimation_list.append([sig2_, coprime_list[i]])
-    return decimation_list
-
-def calculate_correlation_coef(sig1_: list, sig2_: list):
-    R = 0
-    for i in range(0, len(sig1_)):
-        tmp = sig1_[i] * sig2_[i]
-        R += tmp
-    return R
-
-
-# source_sig - source signal is NOT SHIFTED shifted_sig - copy of the signal WILL BE SHIFTED ( for pereodic auto
-# correlation)/ other signal (for pereodic cross correlation) flag = true for APEREODIC correaltion
-# else default for PEREODIC
-def getCorellation(source_sig: list, shifted_sig: list, flag: bool = False):
-    # Creating copy of shifted signal to not trasform array from main program(for further usage)
-    # because in Python list contains not val but reference to objects
-
-    tmp_shifted_sig = copy.deepcopy(shifted_sig)
-
-    correl_list = list()
-    r = calculate_correlation_coef(source_sig, tmp_shifted_sig)
-    correl_list.append(r)
-
-    for i in range(0, len(source_sig)):
-        if flag == False:
-            ap.CyclicShiftRight(tmp_shifted_sig, 1)
-        else:
-            ap.ShiftRight(tmp_shifted_sig, 1)
-
-        r = calculate_correlation_coef(source_sig, tmp_shifted_sig)
-        correl_list.append(r)
-
-    return correl_list
-    # for i in range(0,len(sig1_)):
-
-
 # gettng rmax from correlation list
 # if abs_flag = True then absolute values
 def getMax(aList: list, start, end, abs_flag=False):
@@ -215,74 +147,7 @@ def getMax(aList: list, start, end, abs_flag=False):
     return rmax, rmax_indx_list
 
 
-# E.g you have ansamble of signal and you want to know all cross-correlation between all possible pairs
-# for derivative signals(with HADAMAR)
-# ONLY TO GET CROSS CORRELATION
-def cross_corel_btwn_pairs(list_with_signals: list, mode_name):
-    aList = list()
-    for pair in itertools.combinations(list_with_signals, 2):
-        a_sig, b_sig = pair
-        # print(pair)
-        if mode_name == "PFVK":
-            r = getCorellation(a_sig, b_sig)
-        if mode_name == "AFVK":
-            r = getCorellation(a_sig, b_sig, True)
 
-        aList.append(r)
-    return aList
-
-
-# the same logic as above function
-# but here you passing list pair
-# this one without usin itertools
-def cross_corel_btwn_pairs2(list_with_signals: list, pair_list: list, mode_name):
-    aList = list()
-    for x, y in pair_list:
-
-        # print(pair)
-        if mode_name == "PFVK":
-            r = getCorellation(list_with_signals[x], list_with_signals[y])
-        if mode_name == "AFVK":
-            r = getCorellation(list_with_signals[x], list_with_signals[y], True)
-
-        aList.append(r)
-    return aList
-
-
-# Having list with signals
-# getting list of list with signals' pereodic/apereodic auto correlation function
-def auto_corel_all(list_with_signals: list, mode_name):
-    aList = list()
-    sig_num_list = list()
-
-    for item in list_with_signals:
-        if mode_name == "PFAK":
-            r = getCorellation(item, item)
-        if mode_name == "AFAK":
-            r = getCorellation(item, item, True)
-
-        aList.append(r)
-
-    return aList
-
-
-# исходный сигнал с другими сигналами
-# getting list of correlations of all signals
-def corel_source_and_rest(source_sig, list_with_signals: list, mode_name):
-    aList = list()
-    for item in list_with_signals:
-        if mode_name == "PFVK":
-            r = getCorellation(source_sig, item)
-        if mode_name == "AFVK":
-            r = getCorellation(source_sig, item, True)
-        if mode_name == "PFAK":
-            r = getCorellation(item, item)
-        if mode_name == "AFAK":
-            r = getCorellation(item, item, True)
-
-        # print(r)
-        aList.append(r)
-    return aList
 
 
 def getPair(list_with_count_of_sigs: list):
@@ -393,26 +258,5 @@ def printFullStat(ansamble_of_corel_list: list, start, end, abs_flag=False, list
                                                                             np.mean(kurtosis_list) / math.sqrt(p)))
     print("____________________________"*2,"\n")
 
-def ansamble_correlation(mode):
 
-    def fak_stat(ansamble_of_sig):
-        sig_len = len(ansamble_of_sig[0])
-        if (len(ansamble_of_sig) > 0):
-            asnsam_fak_list = auto_corel_all(ansamble_of_sig, mode)
-            printFullStat(asnsam_fak_list, 1, sig_len - 1, True)
-            printFullStat(asnsam_fak_list, 1, sig_len - 1)
 
-    def fvk_stat(ansamble_of_sig):
-        sig_len = len(ansamble_of_sig[0])
-        if (len(ansamble_of_sig) > 0):
-            pair_list_cryptosig = getPair([i for i in range(0, len(ansamble_of_sig))])
-            pfvk_cryptosig_list = cross_corel_btwn_pairs(ansamble_of_sig, "PFVK")
-            printFullStat(pfvk_cryptosig_list, 0, sig_len, True, list_of_num=pair_list_cryptosig)
-            printFullStat(pfvk_cryptosig_list, 0, sig_len, list_of_num=pair_list_cryptosig)
-
-    if (mode == 'PFAK') or (mode =='AFAK'):
-        return fak_stat
-    elif (mode == 'PFVK') or (mode =='AFVK'):
-        return fvk_stat
-    else:
-        print("Something wrong there is no mode like that")

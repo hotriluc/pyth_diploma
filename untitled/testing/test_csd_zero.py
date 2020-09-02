@@ -1,3 +1,4 @@
+import modules.arr_procedures
 from modules import arr_procedures as ap, calculations as cal
 import copy
 from classes.CDS import CDS
@@ -36,7 +37,7 @@ if __name__=="__main__":
         b.append(item[0])
     b.pop(0)
 
-    ansamble_of_pereodic_auto_corel_list = cal.corel_source_and_rest(sig1_, b, "PFAK")
+    ansamble_of_pereodic_auto_corel_list = modules.arr_procedures.corel_source_and_rest(sig1_, b, "PFAK")
 
 
     for i in range(1, 4):

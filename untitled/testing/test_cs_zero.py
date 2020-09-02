@@ -1,4 +1,4 @@
-
+import modules.arr_procedures
 from classes.CryptoSignal import CryptoSignal
 from modules import calculations as cal, plot
 
@@ -14,10 +14,10 @@ if __name__=="__main__":
     # 256 pfak 32
     # 16 pfak 4
     # 1024 81pfak
-    crypto_sig_ansam = cs.genereteAnsambleOfCryptoSig_zero(3, 32)
+    crypto_sig_ansam = cs.genereteAnsambleOfCryptoSig_zero(3, 50)
 
     print("\nPFAK CRYPTOGRAPHIC SIGNALS")
-    ansam_pfak_list = cal.auto_corel_all(crypto_sig_ansam, "PFAK")
+    ansam_pfak_list = modules.arr_procedures.auto_corel_all(crypto_sig_ansam, "PFAK")
 
     for i in range(0, len(crypto_sig_ansam)):
          print(i+1, ")", crypto_sig_ansam[i])

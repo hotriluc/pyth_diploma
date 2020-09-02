@@ -1,3 +1,4 @@
+import modules.arr_procedures
 from modules import arr_procedures as ap, calculations as cal, plot
 import copy
 
@@ -100,7 +101,7 @@ class CDS:
             sig2_ = [0 for i in range(self.__p - 1)]
 
             # creating rest signals with decimation
-            cal.decimation(sig1_, sig2_, coprime_list[i])
+            modules.arr_procedures.decimation(sig1_, sig2_, coprime_list[i])
 
             # appending decimation_list with list
             # that contains decimated sig and
@@ -142,12 +143,12 @@ if __name__ == "__main__":
     sig2_ = copy.deepcopy(source_sig)
 
     print("PFAK")
-    pereodic_auto_corel_list = cal.getCorellation(sig1_, sig2_)
+    pereodic_auto_corel_list = modules.arr_procedures.getCorellation(sig1_, sig2_)
     print("R = ", pereodic_auto_corel_list)
     print("Rmax = ", cal.getMax(pereodic_auto_corel_list, 1, p - 1, True))
 
     print("AFAK")
-    apereodic_auto_corel_list = cal.getCorellation(sig1_, sig2_, True)
+    apereodic_auto_corel_list = modules.arr_procedures.getCorellation(sig1_, sig2_, True)
     print("R = ", apereodic_auto_corel_list)
     print("Rmax = ", cal.getMax(apereodic_auto_corel_list, 1, p - 1))
 
@@ -165,23 +166,23 @@ if __name__ == "__main__":
 
     print("\nDecimation: ", decimation_signals)
 
-    ansamble_of_pereodic_cross_corel_list = cal.corel_source_and_rest(sig1_, b, "PFVK")
+    ansamble_of_pereodic_cross_corel_list = modules.arr_procedures.corel_source_and_rest(sig1_, b, "PFVK")
     print("\nPFVK")
     cal.printFullStat(ansamble_of_pereodic_cross_corel_list, 0, p, True)
     cal.printFullStat(ansamble_of_pereodic_cross_corel_list, 0, p)
 
-    ansamble_of_apereodic_cross_corel_list = cal.corel_source_and_rest(sig1_, b, "AFVK")
-    ansamble_of_apereodic_cross_corel_list = cal.corel_source_and_rest(sig1_, b, "AFVK")
+
+    ansamble_of_apereodic_cross_corel_list = modules.arr_procedures.corel_source_and_rest(sig1_, b, "AFVK")
     print("\nAFVK")
     cal.printFullStat(ansamble_of_apereodic_cross_corel_list, 0, p, True)
     cal.printFullStat(ansamble_of_apereodic_cross_corel_list, 0, p)
 
-    ansamble_of_pereodic_auto_corel_list = cal.corel_source_and_rest(sig1_, b, "PFAK")
+    ansamble_of_pereodic_auto_corel_list = modules.arr_procedures.corel_source_and_rest(sig1_, b, "PFAK")
     print("\nPFAK")
     cal.printFullStat(ansamble_of_pereodic_auto_corel_list, 1, p-1, True)
     cal.printFullStat(ansamble_of_pereodic_auto_corel_list, 1, p-1)
 
-    ansamble_of_apereodic_auto_corel_list = cal.corel_source_and_rest(sig1_, b, "AFAK")
+    ansamble_of_apereodic_auto_corel_list = modules.arr_procedures.corel_source_and_rest(sig1_, b, "AFAK")
     print("\nAFAK")
     cal.printFullStat(ansamble_of_apereodic_auto_corel_list, 1, p-1, True)
     cal.printFullStat(ansamble_of_apereodic_auto_corel_list, 1, p-1)
