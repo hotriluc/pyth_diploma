@@ -2,7 +2,7 @@ import copy
 import itertools
 import pickle
 import numpy as np
-from modules.calculations import coprimes, printFullStat, getPair
+from modules.calculations import coprimes, printFullStat, getPair, getMax
 
 
 #==============================BASIC MANIPULATION WITH ARRAYS==============================
@@ -95,7 +95,8 @@ def decimation(a_List: list, b_List: list, d: int):
         pos = (d + d * i) % len(a_List)
         b_List[i] = a_List[pos]
 
-
+# Getting all signals created with decimation
+# (number of signals = Euler totient function of signal length)
 def getDecimation(source_signal):
    #getting source singal length
     sig_len = len(source_signal)
@@ -276,6 +277,8 @@ def corel_source_and_rest(source_sig, list_with_signals: list, mode_name):
     return aList
 
 
+#============================== TESTING CORRELATION==============================
+
 # Used for testing ansamble of sig and printed their statistics
 # using closure to keep DRY
 def ansamble_correlation(mode):
@@ -293,6 +296,7 @@ def ansamble_correlation(mode):
         sig_len = len(ansamble_of_sig[0])
         if (len(ansamble_of_sig) > 0):
             pair_list = getPair([i for i in range(0, len(ansamble_of_sig))])
+            # cross_correl_btwn_pairs you can use anothe method correl_source_and_rest
             fvk_sig_list = cross_corel_btwn_pairs(ansamble_of_sig, mode)
             printFullStat(fvk_sig_list, 0, sig_len, True, list_of_num=pair_list)
             printFullStat(fvk_sig_list, 0, sig_len, list_of_num=pair_list)
@@ -303,3 +307,39 @@ def ansamble_correlation(mode):
         return fvk_stat
     else:
         print("Something wrong there is no mode like that")
+
+#  FOR 1 SIGNAL
+def test_auto_correl (source_sig):
+    print("Signal: ",source_sig)
+    start_point  = 1
+    finish_point = len(source_sig)-1
+
+
+    sig1_ = copy.deepcopy(source_sig)
+    sig2_ = copy.deepcopy(source_sig)
+
+
+    print("PFAK")
+    pereodic_auto_corel_list = getCorellation(sig1_, sig2_)
+    print("R = ", pereodic_auto_corel_list)
+    print("Rmax = ", getMax(pereodic_auto_corel_list, start_point, finish_point , True))
+
+    print("AFAK")
+    apereodic_auto_corel_list = getCorellation(sig1_, sig2_, True)
+    print("R = ", apereodic_auto_corel_list)
+    print("Rmax = ", getMax(apereodic_auto_corel_list, start_point, finish_point))
+
+    return  pereodic_auto_corel_list, apereodic_auto_corel_list
+
+# 1 source singal with each from ansamble
+def test_cross_correl (source_sig, ansamble_of_sig):
+    sig1_ = copy.deepcopy(source_sig)
+    ansamble_of_pereodic_cross_corel_list = corel_source_and_rest(sig1_, ansamble_of_sig, "PFVK")
+    print("\nPFVK")
+    printFullStat(ansamble_of_pereodic_cross_corel_list, 0, len(source_sig), True)
+    printFullStat(ansamble_of_pereodic_cross_corel_list, 0, len(source_sig))
+
+    ansamble_of_apereodic_cross_corel_list = corel_source_and_rest(sig1_, ansamble_of_sig, "AFVK")
+    print("\nAFVK")
+    printFullStat(ansamble_of_apereodic_cross_corel_list, 0, len(source_sig), True)
+    printFullStat(ansamble_of_apereodic_cross_corel_list, 0, len(source_sig))

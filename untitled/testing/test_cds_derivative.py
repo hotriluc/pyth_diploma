@@ -17,7 +17,7 @@ if  __name__=="__main__":
 
 
     # decimated signals and coef
-    decimation_signals = c.getDecimation()
+    decimation_signals = c.get_decimation()
 
     h = Hadamar(p - 1)
     hadamar_sig_list = h.getHadamMatrix()

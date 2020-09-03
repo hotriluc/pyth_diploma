@@ -3,22 +3,24 @@ from modules import arr_procedures as ap, calculations as cal, plot
 import copy
 
 
-
 class CDS:
-
     def __init__(self, p):
         if not cal.isPrime(p):
             raise Exception("P is not prime")
         self.__p = p
         self.__table = [[0 for j in range(p - 1)] for i in range(6)]
+        self.__teta_min = 2
         self.fill_all_table()
 
     @property
     def table(self):
         return self.__table
 
-    def getP(self):
+    def get_p(self):
         return self.__p
+
+    def get_teta_min(self):
+        return self.__teta_min
 
     # filling first row Ui of the table(_2darray)
     def fill_row_Ui(self):
@@ -28,10 +30,11 @@ class CDS:
     # filling second row ai of the table(2darray) by using rule ai = θ^j mod P, j = 0.. P-1
     def fill_row_ai(self):
         # Getting Min Primative root of N(p)
-        teta_min = cal.findPrimitive(self.__p)
+        self.__teta_min = cal.findPrimitive(self.__p)
+
         for i in range(0, self.__p - 1):
             b = i
-            a = teta_min
+            a = self.__teta_min
             c = cal.power(a, b, self.__p)
             self.__table[1][i] = c
 
@@ -45,7 +48,7 @@ class CDS:
             # each Ui corresponds to its own ai , saving ai as position for Ai
             position = self.__table[1][i]
             # adding Ui to saved position
-            self.table[2][position - 1] = tmp
+            self.__table[2][position - 1] = tmp
 
     # filling fourth row bi of the table(2darray)
     def fill_row_bi(self):
@@ -53,8 +56,8 @@ class CDS:
         for i in range(0, self.__p - 1):
             tmp = self.__table[1][i]
             self.__table[3][i] = (tmp + 1) % self.__p
-            if self.table[3][i] == 0:
-                self.table[3][i] = 1
+            if self.__table[3][i] == 0:
+                self.__table[3][i] = 1
 
     # filling fifth row MHi of the table(2darray)
     def fill_row_MH(self):
@@ -90,7 +93,7 @@ class CDS:
         self.fill_row_MH()
         self.fill_row_Psi()
 
-    def getDecimation(self):
+    def get_decimation(self):
         # Copy source signal
         sig1_ = copy.deepcopy(self.__table[5])
         decimation_list = list()
@@ -109,7 +112,13 @@ class CDS:
             decimation_list.append([sig2_, coprime_list[i]])
         return decimation_list
 
+    def print_general_info(self):
+        print("P = {0}\nL = {1}".format(self.__p, self.__p - 1))
+        print("ϕ({0}) = {1}".format(self.__p - 1, cal.coprimes(self.__p - 1)))
+        print(("ϴmin = {0}".format(self.get_teta_min())))
 
+    def print_table(self):
+        ap.print_2d_arr(self.__table)
 
 
 # Testing
@@ -134,7 +143,7 @@ if __name__ == "__main__":
     ap.print_2d_arr(c.table)
 
     # decimated signals and coef
-    decimation_signals = c.getDecimation()
+    decimation_signals = c.get_decimation()
 
     # getting source signal from the table
     source_sig = c.table[5]
@@ -171,7 +180,6 @@ if __name__ == "__main__":
     cal.printFullStat(ansamble_of_pereodic_cross_corel_list, 0, p, True)
     cal.printFullStat(ansamble_of_pereodic_cross_corel_list, 0, p)
 
-
     ansamble_of_apereodic_cross_corel_list = modules.arr_procedures.corel_source_and_rest(sig1_, b, "AFVK")
     print("\nAFVK")
     cal.printFullStat(ansamble_of_apereodic_cross_corel_list, 0, p, True)
@@ -179,12 +187,10 @@ if __name__ == "__main__":
 
     ansamble_of_pereodic_auto_corel_list = modules.arr_procedures.corel_source_and_rest(sig1_, b, "PFAK")
     print("\nPFAK")
-    cal.printFullStat(ansamble_of_pereodic_auto_corel_list, 1, p-1, True)
-    cal.printFullStat(ansamble_of_pereodic_auto_corel_list, 1, p-1)
+    cal.printFullStat(ansamble_of_pereodic_auto_corel_list, 1, p - 1, True)
+    cal.printFullStat(ansamble_of_pereodic_auto_corel_list, 1, p - 1)
 
     ansamble_of_apereodic_auto_corel_list = modules.arr_procedures.corel_source_and_rest(sig1_, b, "AFAK")
     print("\nAFAK")
-    cal.printFullStat(ansamble_of_apereodic_auto_corel_list, 1, p-1, True)
-    cal.printFullStat(ansamble_of_apereodic_auto_corel_list, 1, p-1)
-
-
+    cal.printFullStat(ansamble_of_apereodic_auto_corel_list, 1, p - 1, True)
+    cal.printFullStat(ansamble_of_apereodic_auto_corel_list, 1, p - 1)

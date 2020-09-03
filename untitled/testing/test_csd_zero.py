@@ -23,7 +23,7 @@ if __name__=="__main__":
     ap.print_2d_arr(c.table)
 
     # decimated signals and coef
-    d = c.getDecimation()
+    d = c.get_decimation()
 
     # getting source signal from the table
     source_sig = c.table[5]
