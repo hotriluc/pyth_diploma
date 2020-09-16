@@ -3,12 +3,14 @@ from __future__ import division
 import copy
 from scipy import signal
 
+from classes.CDS import CDS
 from classes.CryptoSignal import CryptoSignal
-from modules.arr_procedures import test_auto_correl
+from classes.Hadamar import Hadamar
+from modules.arr_procedures import test_auto_correl, derivativeSigFromTo, print_derivative
 from modules.plot import  build_spectrum
+from modules.arr_procedures import getDecimation
 
 import numpy as np
-import matplotlib.pyplot as plt
 from modules.plot import build_plot
 
 def test_cs_spectrum():
@@ -26,30 +28,114 @@ def test_cs_spectrum():
 
     # the same as above function
     # https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.periodogram.html
-    freq_1, ps_1 = signal.periodogram(pfak_list,sampling_rate)
-
-
+    # freq_1, ps_1 = signal.periodogram(pfak_list, sampling_rate)
 
     print('Frequency:',freq)
     print('PSD',ps)
-    print('Frequency:', freq_1)
-    print('PSD', ps_1)
     build_spectrum(freq, ps)
 
-    build_spectrum(freq_1,ps_1)
+    # print('Frequency:', freq_1)
+    # print('PSD', ps_1)
+    # build_spectrum(freq_1,ps_1)
 
     # if you need a left part but it make
     # no sense to use it because its mirrored
-    # ps1 = np.abs(np.fft.fft(pfak_list))
-    # time_step = 1 / sampling_rate
-    #
-    # freqs = np.fft.fftfreq(len(pfak_list), time_step)
-    # idx = np.argsort(freqs)
-    #
-    # plt.plot(freqs[idx], ps1[idx])
-    # plt.show()
+    freq_1, ps_1, idx_1 = calculate_spectrum_autocorrel_fft(pfak_list, sampling_rate)
+    build_spectrum(freq_1[idx_1], ps_1[idx_1])
 
 
+def test_cds_spectrum():
+    cds = CDS(257)
+    cds.print_general_info()
+    cds.print_table()
+    source_sig = cds.table[5]
+
+
+    pfak_list, afak_list = test_auto_correl(source_sig)
+    decimations = getDecimation(source_sig)
+
+    # setting sampling rate
+    sampling_rate = 30
+    # calculate spctrum
+    freq, ps = calculate_spectrum_autocorrel(pfak_list, sampling_rate)
+    print('Frequency:', freq)
+    print('PSD', ps)
+    build_spectrum(freq, ps)
+
+    # if you need a left part but it make
+    # no sense to use it because its mirrored
+    freq_1, ps_1, idx_1 = calculate_spectrum_autocorrel_fft(pfak_list, sampling_rate)
+    build_spectrum(freq_1[idx_1], ps_1[idx_1])
+
+    # freq_1, ps_1 = signal.periodogram(pfak_list, sampling_rate)
+    # print('Frequency:', freq_1)
+    # print('PSD', ps_1)
+    # build_spectrum(freq_1, ps_1)
+
+
+def test_derivative_cs_spectrum():
+    p = 256
+    h = Hadamar(p)
+    cs = CryptoSignal(p)
+
+    source_sig = cs.generateDefRandomSeq(32)
+    hadamar_sig_list = h.getHadamMatrix()
+
+    # setting sampling rate
+    sampling_rate = 30
+
+    # derivative
+    dersig, combinations = derivativeSigFromTo([source_sig], hadamar_sig_list, 1, 5)
+    print_derivative(dersig, combinations)
+
+    for sig in dersig:
+        pfak_list, afak_list = test_auto_correl(sig)
+        freq, ps = calculate_spectrum_autocorrel(pfak_list, sampling_rate)
+        print('Frequency:', freq)
+        print('PSD', ps)
+        build_spectrum(freq, ps)
+
+    # for i in range(0, len(dersig)):
+    #     print("CS#{0} and HADAMAR#{1}".format(combinations[i][0], combinations[i][1]))
+    #     print(dersig[i])
+    #
+    #     pfak_list, afak_list = test_auto_correl(dersig[i])
+    #
+    #     # calculate spctrum
+    #     freq, ps = calculate_spectrum_autocorrel(pfak_list, sampling_rate)
+    #     print('Frequency:', freq)
+    #     print('PSD', ps)
+    #     build_spectrum(freq, ps)
+
+def test_derivative_cds_spectrum():
+    cds = CDS(257)
+    cds.print_general_info()
+    cds.print_table()
+    source_sig = cds.table[5]
+    h = Hadamar(256)
+    hadamar_sig_list = h.getHadamMatrix()
+
+    dersig, combinations = derivativeSigFromTo([source_sig], hadamar_sig_list, 1, 5)
+    # setting sampling rate
+    sampling_rate = 30
+
+
+    for i in range(0, len(dersig)):
+
+        print("CDS#{0} and HADAMAR#{1}".format(combinations[i][0], combinations[i][1]))
+        print(dersig[i])
+        print(dersig[i] == source_sig)
+
+        pfak_list, afak_list = test_auto_correl(dersig[i])
+
+        # calculate spctrum
+        freq, ps = calculate_spectrum_autocorrel(pfak_list, sampling_rate)
+        print('Frequency:', freq)
+        print('PSD', ps)
+        build_spectrum(freq, ps)
+
+
+# ============SPECTRUM CALCULATION============================================
 
 # power spectrum = abs(forier_transform(f(t))
 def calculate_spectrum(data_list, sampling_rate):
@@ -76,6 +162,18 @@ def calculate_spectrum_autocorrel(fak_list, sampling_rate):
     frequency = np.linspace(0, sampling_rate / 2, len(power_spectrum))
     return frequency, power_spectrum
 
+def calculate_spectrum_autocorrel_fft(fak_list, sampling_rate):
+    power_spectrum = np.fft.fft(fak_list)
+    time_step = 1/sampling_rate
+    freqs = np.fft.fftfreq(len(fak_list), time_step)
+    idx = np.argsort(freqs)
+
+
+    return  freqs,power_spectrum,idx
+
+# ========================================================
+
+# ============NOISE============================================
 # as pure signal we use correaltion function
 def add_noise(pure):
     # Converting pure (list) to ndarray
@@ -87,10 +185,18 @@ def add_noise(pure):
     signal = data + noise
 
     return signal
-
+# ========================================================
 
 if __name__=='__main__':
-    test_cs_spectrum()
+    # test_cs_spectrum()
+
+    test_cds_spectrum()
+
+    # test_derivative_cs_spectrum()
+
+    # test_derivative_cds_spectrum()
+
+
 
     # https://www.kite.com/python/answers/how-to-plot-a-power-spectrum-in-python
     # раскладываем в ряд фурье ФАК
