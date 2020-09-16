@@ -173,7 +173,12 @@ def derivativeSigFromTo(ansamble_sig1: list, hadamar_sig: list,hadam_from,hadam_
             sig_comb_list.append((i, j))
     return der_sig_list, sig_comb_list
 
-
+# You should get combinations using function above (derivativeSigFromTo)
+#
+def print_derivative(dersig, combinations):
+    for i in range(0, len(dersig)):
+        print("CS#{0} and HADAMAR#{1}".format(combinations[i][0], combinations[i][1]))
+        print(dersig[i])
 
 #============================== CORRELATION==============================
 
@@ -279,14 +284,14 @@ def corel_source_and_rest(source_sig, list_with_signals: list, mode_name):
 
 #============================== TESTING CORRELATION==============================
 
-# Used for testing ansamble of sig and printed their statistics
+# Used for testing ensemble of signals and printed their statistics
 # using closure to keep DRY
 def ansamble_correlation(mode):
 
     def fak_stat(ansamble_of_sig):
         print(mode)
         sig_len = len(ansamble_of_sig[0])
-        if (len(ansamble_of_sig) > 0):
+        if len(ansamble_of_sig) > 0:
             asnsam_fak_list = auto_corel_all(ansamble_of_sig, mode)
             printFullStat(asnsam_fak_list, 1, sig_len - 1, True)
             printFullStat(asnsam_fak_list, 1, sig_len - 1)
@@ -294,7 +299,7 @@ def ansamble_correlation(mode):
     def fvk_stat(ansamble_of_sig):
         print(mode)
         sig_len = len(ansamble_of_sig[0])
-        if (len(ansamble_of_sig) > 0):
+        if len(ansamble_of_sig) > 0:
             pair_list = getPair([i for i in range(0, len(ansamble_of_sig))])
             # cross_correl_btwn_pairs you can use anothe method correl_source_and_rest
             fvk_sig_list = cross_corel_btwn_pairs(ansamble_of_sig, mode)

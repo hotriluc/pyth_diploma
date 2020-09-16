@@ -51,6 +51,9 @@ def test_cds_decimation(source_sig,decimation_list):
     # asnsam_pfak_list = cal.auto_corel_all(only_decimated_signals, "PFAK")
     # cal.printFullStat(asnsam_pfak_list, 1, 256 - 1, True)
     # cal.printFullStat(asnsam_pfak_list, 1, 256 - 1)
+
+    # Defined variables for function that will
+    # calculate correlation for whole ensemble of signals
     pfak_function = ap.ansamble_correlation('PFAK')
     afak_function = ap.ansamble_correlation('AFAK')
     pfvk_function = ap.ansamble_correlation('PFVK')

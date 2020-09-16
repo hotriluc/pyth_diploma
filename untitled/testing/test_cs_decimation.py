@@ -16,6 +16,8 @@ def test_cs_decimation(source_sig,decimation_list):
     # asnsam_pfak_list = cal.auto_corel_all(only_decimated_signals, "PFAK")
     # cal.printFullStat(asnsam_pfak_list, 1, 256 - 1, True)
     # cal.printFullStat(asnsam_pfak_list, 1, 256 - 1)
+    # Defined variables for function that will
+    # calculate correlation for whole ensemble of signals
     pfak_function = modules.arr_procedures.ansamble_correlation('PFAK')
     afak_function = modules.arr_procedures.ansamble_correlation('AFAK')
     pfvk_function = modules.arr_procedures.ansamble_correlation('PFVK')
@@ -43,8 +45,7 @@ if __name__ =='__main__':
     #Source signal calculate PFAK, AFAK
     pfak_list,afak_list = ap.test_auto_correl(source_sig)
 
-
-
+    # print source signal's full stat of PFAK
     cal.printFullStat([pfak_list],1,len(source_sig)-1,True)
     cal.printFullStat([pfak_list], 1, len(source_sig) - 1)
     cal.printFullStat([afak_list], 1, len(source_sig) - 1,True)
