@@ -7,7 +7,7 @@ from classes.CDS import CDS
 from classes.CryptoSignal import CryptoSignal
 from classes.Hadamar import Hadamar
 from modules.arr_procedures import test_auto_correl, derivativeSigFromTo, print_derivative
-from modules.plot import  build_spectrum
+from modules.plot import build_spectrum, build_spectrum_plotly
 from modules.arr_procedures import getDecimation
 
 import numpy as np
@@ -43,9 +43,14 @@ def test_cs_spectrum():
     freq_1, ps_1, idx_1 = calculate_spectrum_autocorrel_fft(pfak_list, sampling_rate)
     build_spectrum(freq_1[idx_1], ps_1[idx_1])
 
+    # PLOTLY PLOT all above are regular plots with matplotlib
+    # build_spectrum_plotly(frequency=freq, power_spectrum=ps,
+    #                       graph_name='../plotly_plots/CS_{0}_Spectrum'.format(len(sig)))
+
+
 
 def test_cds_spectrum():
-    cds = CDS(257)
+    cds = CDS(1021)
     cds.print_general_info()
     cds.print_table()
     source_sig = cds.table[5]
@@ -67,6 +72,11 @@ def test_cds_spectrum():
     freq_1, ps_1, idx_1 = calculate_spectrum_autocorrel_fft(pfak_list, sampling_rate)
     build_spectrum(freq_1[idx_1], ps_1[idx_1])
 
+    # PLOTLY PLOT all above are regular plots with matplotlib
+    # build_spectrum_plotly(frequency=freq, power_spectrum=ps,
+    #                       graph_name='../plotly_plots/CDS_{0}_Spectrum'.format(len(source_sig)))
+
+
     # freq_1, ps_1 = signal.periodogram(pfak_list, sampling_rate)
     # print('Frequency:', freq_1)
     # print('PSD', ps_1)
@@ -87,13 +97,17 @@ def test_derivative_cs_spectrum():
     # derivative
     dersig, combinations = derivativeSigFromTo([source_sig], hadamar_sig_list, 1, 5)
     print_derivative(dersig, combinations)
-
+    # i=0
     for sig in dersig:
         pfak_list, afak_list = test_auto_correl(sig)
         freq, ps = calculate_spectrum_autocorrel(pfak_list, sampling_rate)
         print('Frequency:', freq)
         print('PSD', ps)
         build_spectrum(freq, ps)
+
+        # build_spectrum_plotly(frequency=freq, power_spectrum=ps,
+        #                       graph_name='../plotly_plots/DERIVATIVE#{0}_{1}_Spectrum'.format(i,len(sig)))
+        # i+=1
 
     # for i in range(0, len(dersig)):
     #     print("CS#{0} and HADAMAR#{1}".format(combinations[i][0], combinations[i][1]))
@@ -190,9 +204,9 @@ def add_noise(pure):
 if __name__=='__main__':
     # test_cs_spectrum()
 
-    test_cds_spectrum()
+    # test_cds_spectrum()
 
-    # test_derivative_cs_spectrum()
+    test_derivative_cs_spectrum()
 
     # test_derivative_cds_spectrum()
 
