@@ -13,26 +13,44 @@ from modules.arr_procedures import getDecimation
 import numpy as np
 from modules.plot import build_plot
 
+def print_freq_and_ps(frequencies, power_spectrum):
+    print('Frequency:', frequencies)
+    print('PSD:', power_spectrum)
+
+    for i in range(0,len(frequencies)):
+        print('Frequency = {0} Hz, PSD = {1}'.format(frequencies[i],power_spectrum[i]))
+
+
 def test_cs_spectrum():
     # Creating CS
     cs = CryptoSignal(256)
     sig = cs.generateDefRandomSeq(32)
     # calculatin pfak and afak
     pfak_list, afak_list = test_auto_correl(sig)
-    build_plot(pfak_list)
+    build_plot(pfak_list, 'ПФАК')
+    build_plot(afak_list, 'АФАК')
 
     # setting sampling rate
     sampling_rate = 30
-    # calculate spctrum
-    freq, ps = calculate_spectrum_autocorrel(pfak_list, sampling_rate)
+    # calculate spctrum using pfak list
+    freq_pfak, ps_pfak = calculate_spectrum_autocorrel(pfak_list, sampling_rate)
+
+    # calculate spectrum using afak list
+    freq_afak, ps_afak = calculate_spectrum_autocorrel(afak_list, sampling_rate)
 
     # the same as above function
     # https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.periodogram.html
     # freq_1, ps_1 = signal.periodogram(pfak_list, sampling_rate)
 
-    print('Frequency:',freq)
-    print('PSD',ps)
-    build_spectrum(freq, ps)
+    # printing and build plot
+    print('=====PFAK SPECTRUM======')
+    print_freq_and_ps(freq_pfak, ps_pfak)
+    build_spectrum(freq_pfak, ps_pfak)
+
+    print('=====AFAK SPECTRUM======')
+    print_freq_and_ps(freq_afak, ps_afak)
+    build_spectrum(freq_afak, ps_afak)
+
 
     # print('Frequency:', freq_1)
     # print('PSD', ps_1)
@@ -40,8 +58,11 @@ def test_cs_spectrum():
 
     # if you need a left part but it make
     # no sense to use it because its mirrored
-    freq_1, ps_1, idx_1 = calculate_spectrum_autocorrel_fft(pfak_list, sampling_rate)
-    build_spectrum(freq_1[idx_1], ps_1[idx_1])
+    freq_pfak_1, ps_pfak_1, idx_pfak_1 = calculate_spectrum_autocorrel_fft(pfak_list, sampling_rate)
+    build_spectrum(freq_pfak_1[idx_pfak_1], ps_pfak_1[idx_pfak_1])
+
+    freq_afak_1, ps_afak_1, idx_afak_1 = calculate_spectrum_autocorrel_fft(afak_list, sampling_rate)
+    build_spectrum(freq_afak_1[idx_afak_1], ps_afak_1[idx_afak_1])
 
     # PLOTLY PLOT all above are regular plots with matplotlib
     # build_spectrum_plotly(frequency=freq, power_spectrum=ps,
@@ -202,11 +223,11 @@ def add_noise(pure):
 # ========================================================
 
 if __name__=='__main__':
-    # test_cs_spectrum()
+    test_cs_spectrum()
 
     # test_cds_spectrum()
 
-    test_derivative_cs_spectrum()
+    # test_derivative_cs_spectrum()
 
     # test_derivative_cds_spectrum()
 

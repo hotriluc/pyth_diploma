@@ -26,7 +26,7 @@ def build_spectrum(frequency,power_spectrum):
 
 
     plt.grid()
-    plt.xlabel('frequency [Hz]')
+    plt.xlabel('Frequency [Hz]')
     plt.ylabel('Spectrum')
 
     plt.plot(frequency, abs(power_spectrum))
