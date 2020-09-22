@@ -6,7 +6,7 @@ from scipy import signal
 from classes.CDS import CDS
 from classes.CryptoSignal import CryptoSignal
 from classes.Hadamar import Hadamar
-from modules.arr_procedures import test_auto_correl, derivativeSigFromTo, print_derivative
+from modules.arr_procedures import test_auto_correl, derivativeSigFromTo, print_derivative, writeListInFile
 from modules.plot import build_spectrum, build_spectrum_plotly
 from modules.arr_procedures import getDecimation
 
@@ -17,14 +17,18 @@ def print_freq_and_ps(frequencies, power_spectrum):
     print('Frequency:', frequencies)
     print('PSD:', power_spectrum)
 
+    print(
+        '\nСнизу приведены значения из полученных массивов –'
+        ' пара ( частота, значения спектральной плотности соответствующая данной частоте)')
+
     for i in range(0,len(frequencies)):
         print('Frequency = {0} Hz, PSD = {1}'.format(frequencies[i],power_spectrum[i]))
 
 
 def test_cs_spectrum():
     # Creating CS
-    cs = CryptoSignal(256)
-    sig = cs.generateDefRandomSeq(32)
+    cs = CryptoSignal(1024)
+    sig = cs.generateDefRandomSeq(81)
     # calculatin pfak and afak
     pfak_list, afak_list = test_auto_correl(sig)
     build_plot(pfak_list, 'ПФАК')
@@ -105,42 +109,56 @@ def test_cds_spectrum():
 
 
 def test_derivative_cs_spectrum():
-    p = 256
+    p = 1024
     h = Hadamar(p)
     cs = CryptoSignal(p)
-
-    source_sig = cs.generateDefRandomSeq(32)
-    hadamar_sig_list = h.getHadamMatrix()
-
     # setting sampling rate
     sampling_rate = 30
 
+    # creating source signal and hadamard matrix
+    source_sig = cs.generateDefRandomSeq(81)
+    hadamar_sig_list = h.getHadamMatrix()
+
+    # writing hadamard matrix into file
+    writeListInFile(hadamar_sig_list, "D:/DIPLOM/спектры_маг_досл/спектрКСпроизводные/hadamar"
+                    + str(p) + ".txt")
     # derivative
-    dersig, combinations = derivativeSigFromTo([source_sig], hadamar_sig_list, 1, 5)
+    dersig, combinations = derivativeSigFromTo([source_sig], hadamar_sig_list, 1, 4)
+
+    print('Исходный сигнал\nCS#0: ', source_sig)
+    print('Получаем производные сигналы:')
     print_derivative(dersig, combinations)
-    # i=0
-    for sig in dersig:
-        pfak_list, afak_list = test_auto_correl(sig)
-        freq, ps = calculate_spectrum_autocorrel(pfak_list, sampling_rate)
-        print('Frequency:', freq)
-        print('PSD', ps)
-        build_spectrum(freq, ps)
+
+    for i in range(0,len(dersig)):
+        sigName = 'Derivative Signal #'+str(i)
+        print('\n'+sigName)
+        pfak_list, afak_list = test_auto_correl(dersig[i])
+        build_plot(pfak_list, 'ПФАК '+sigName)
+        build_plot(afak_list, 'АФАК '+sigName)
+
+
+        # calculate spctrum using pfak list
+        freq_pfak, ps_pfak = calculate_spectrum_autocorrel(pfak_list, sampling_rate)
+        # calculate spectrum using afak list
+        freq_afak, ps_afak = calculate_spectrum_autocorrel(afak_list, sampling_rate)
+
+        # printing and build plot
+        print('\nРассчитаем спектр используя ПФАК. Для того, чтобы его рассчитать используем преобразование Фурье. Получили следующие результаты (2 массива – в одном хранятся частоты, а в другом значения спектральной плотности):')
+        print('=====PFAK SPECTRUM======')
+        print_freq_and_ps(freq_pfak, ps_pfak)
+        build_spectrum(freq_pfak, ps_pfak,'PFAK PSD of '+sigName)
+
+        print(
+            '\nРассчитаем спектр используя АФАК. Для того, чтобы его рассчитать используем преобразование Фурье. Получили следующие результаты '
+            '(2 массива – в одном хранятся частоты, а в другом значения спектральной плотности):')
+        print('=====AFAK SPECTRUM======')
+        print_freq_and_ps(freq_afak, ps_afak)
+        build_spectrum(freq_afak, ps_afak,'AFAK PSD of '+sigName)
 
         # build_spectrum_plotly(frequency=freq, power_spectrum=ps,
         #                       graph_name='../plotly_plots/DERIVATIVE#{0}_{1}_Spectrum'.format(i,len(sig)))
-        # i+=1
 
-    # for i in range(0, len(dersig)):
-    #     print("CS#{0} and HADAMAR#{1}".format(combinations[i][0], combinations[i][1]))
-    #     print(dersig[i])
-    #
-    #     pfak_list, afak_list = test_auto_correl(dersig[i])
-    #
-    #     # calculate spctrum
-    #     freq, ps = calculate_spectrum_autocorrel(pfak_list, sampling_rate)
-    #     print('Frequency:', freq)
-    #     print('PSD', ps)
-    #     build_spectrum(freq, ps)
+
 
 def test_derivative_cds_spectrum():
     cds = CDS(257)
@@ -223,11 +241,11 @@ def add_noise(pure):
 # ========================================================
 
 if __name__=='__main__':
-    test_cs_spectrum()
+    # test_cs_spectrum()
 
     # test_cds_spectrum()
 
-    # test_derivative_cs_spectrum()
+    test_derivative_cs_spectrum()
 
     # test_derivative_cds_spectrum()
 

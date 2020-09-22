@@ -14,6 +14,9 @@ def build_plotly(aList, graph_name="Untitled"):
 
 # using matplotlib to build plot
 def build_plot(aList, graph_name=""):
+    if(len(aList)>200):
+        plt.figure(figsize=(20, 5))
+
     plt.plot(aList, color='red', linewidth=1, marker='o', markersize=1)
     csfont = {'fontname': 'Times New Roman',
                           'weight': 'normal',
@@ -22,14 +25,19 @@ def build_plot(aList, graph_name=""):
     plt.grid()
     plt.show()
 
-def build_spectrum(frequency,power_spectrum):
+def build_spectrum(frequency,power_spectrum,graph_name=""):
+    if (len(frequency) > 200):
+        plt.figure(figsize=(20, 5))
 
-
-    plt.grid()
     plt.xlabel('Frequency [Hz]')
     plt.ylabel('Spectrum')
 
     plt.plot(frequency, abs(power_spectrum))
+    csfont = {'fontname': 'Times New Roman',
+              'weight': 'normal',
+              'size': 10}
+    plt.title(graph_name, **csfont)
+    plt.grid()
     plt.show()
 
     # fig = plt.figure()
