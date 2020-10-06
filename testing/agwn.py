@@ -105,7 +105,7 @@ if __name__=="__main__":
 
 
     N = 20
-    M = 100
+    M = 10000
     a = math.sqrt((8/5)*Pw)
 
     x = math.floor(np.random.randint(0,2**k))
@@ -122,6 +122,7 @@ if __name__=="__main__":
 
 
     for s_n in range(1,N):
+        print(s_n)
         count = 0
         n_zero = 1/s_n
         for i in range(0,M):
@@ -174,5 +175,6 @@ if __name__=="__main__":
 
     print(p_sn)
 
+    plt.semilogy()
     plt.plot(p_sn)
     plt.show()
