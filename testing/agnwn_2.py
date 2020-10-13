@@ -64,7 +64,7 @@ def test_noise_symbol():
 def test_seq(signal, N):
 
 
-    snrindB_range = range(0, 11)
+    snrindB_range = range(1, 11)
     itr = len(snrindB_range)
     ber = [None] * itr
 
@@ -83,19 +83,19 @@ def test_seq(signal, N):
             noise = generate_noise(noise_mean, noise_std, len(signal))
             rx_sig = received_sig(signal, noise)
             det_sig = detected_sig(rx_sig)
-            no_errors = err(det_sig, signal)
+            no_errors+= err(det_sig, signal)
 
-        ber[n] = no_errors / N*len(signal)
+        ber[n] = no_errors / (N*len(signal))
 
         print_info(snrindB,no_errors,ber[n])
-
+    print(ber)
     plot.build_BER(snrindB_range, ber)
 
 
 # Отправляем по 1 бит сигнала (КС или ХДС, или производій)
 def test_seq_symbol(signal,N):
 
-    snrindB_range = range(0, 11)
+    snrindB_range = range(1, 11)
     itr = len(snrindB_range)
     ber = [None] * itr
 
@@ -194,5 +194,5 @@ if __name__=='__main__':
    sig = cs.generateDefRandomSeq(32)
    c = CDS(257)
    sig_2 = c.table[5]
-   # test_seq(sig_2,10000)
-   test_seq_symbol(sig_2,2560000)
+   test_seq(sig_2,10000)
+   # test_seq_symbol(sig_2,2560000 )

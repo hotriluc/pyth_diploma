@@ -4,9 +4,8 @@ import random
 from scipy.integrate import quad
 import matplotlib.pyplot as plt
 
-
-
-
+from modules.noise import print_info
+from modules.plot import build_BER
 
 
 def integrand(t,sig_with_noise,w_zero):
@@ -92,15 +91,13 @@ def test_agwn_analytical():
             count += dif
 
         p_sn.append(count / (k * M))
-        print("SNR in dB:", s_n)
-        print("Numbder of errors:", count)
-        print("Error probability:", p_sn[s_n - 1])
+        print_info(s_n, s_n, p_sn[s_n - 1])
+
 
     print(p_sn)
 
-    plt.semilogy()
-    plt.plot(p_sn)
-    plt.show()
+    snr_inDb = range(0,20)
+    build_BER(snr_inDb,p_sn)
 
 
 if __name__=="__main__":
@@ -114,6 +111,7 @@ if __name__=="__main__":
 
 
     N = 20
+    snr_in_db_range = range(1,N)
     M = 10000
     a = math.sqrt((8/5)*Pw)
 
@@ -178,14 +176,10 @@ if __name__=="__main__":
             count+=dif
 
         p_sn.append(count/(k*M))
-        print("SNR in dB:", s_n)
-        print("Numbder of errors:", count)
-        print("Error probability:", p_sn[s_n-1])
+        print_info(s_n, count, p_sn[s_n - 1])
 
 
 
     print(p_sn)
 
-    plt.semilogy()
-    plt.plot(p_sn)
-    plt.show()
+    build_BER(snr_in_db_range,p_sn)
