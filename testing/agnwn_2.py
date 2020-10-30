@@ -72,6 +72,7 @@ def test_seq(signal, N):
     for n in range(0, itr):
         snrindB = snrindB_range[n]
         snr = 10.0 ** (snrindB / 10.0)
+        # sigma^2 = N0/2
         noise_std = 1 / sqrt(2 * snr)
 
         noise_mean = 0

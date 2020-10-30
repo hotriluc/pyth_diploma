@@ -13,6 +13,7 @@ from modules.arr_procedures import getDecimation
 import numpy as np
 from modules.plot import build_plot
 
+#Printing Frequency and PSD
 def print_freq_and_ps(frequencies, power_spectrum):
     print('Frequency:', frequencies)
     print('PSD:', power_spectrum)
@@ -47,11 +48,14 @@ def print_spectrum_info_w_plot(mode):
         return afak_spectrum
 
 def test_cs_spectrum():
+    # Init spectrum info function for diffrent modes : PFAK and AFAK
     fak_spectrum_info = print_spectrum_info_w_plot('PFAK')
     afak_spectrum_info = print_spectrum_info_w_plot('AFAK')
+
     # Creating CS
     cs = CryptoSignal(1024)
     sig = cs.generateDefRandomSeq(81)
+
     # calculatin pfak and afak
     pfak_list, afak_list = test_auto_correl(sig)
     build_plot(pfak_list, 'PFAK CS'+str(len(sig)))
@@ -59,11 +63,10 @@ def test_cs_spectrum():
 
     # setting sampling rate
     sampling_rate = 30
-    # [1:len(pfak_list)-1) excluding pfak
+
+    # [1:len(pfak_list)-1) excluding Main peacks of PFAK
     # calculate spctrum using pfak list
-
     freq_pfak, ps_pfak = calculate_spectrum_autocorrel(pfak_list[1:len(pfak_list)-1], sampling_rate)
-
     # calculate spectrum using afak list
     freq_afak, ps_afak = calculate_spectrum_autocorrel(afak_list[1:len(afak_list)], sampling_rate)
 
@@ -116,11 +119,15 @@ def test_cds_spectrum():
     # cds.print_table()
     source_sig = cds.table[5]
 
+    # Print Source signal CDS
     print('Source CDS'+str(len(source_sig)))
+    # Calculating PFAK, AFAK for source signal CDS
     pfak_list, afak_list = test_auto_correl(source_sig)
+    # Building plot for PFAK and AFAK
     build_plot(pfak_list, 'ПФАК ' + 'Source CDS{0}'.format(len(source_sig)))
     build_plot(afak_list, 'АФАК ' + 'Source CDS{0}'.format(len(source_sig)))
 
+    # Getting all decimations for source signal
     decimations = getDecimation(source_sig)
     writeListInFile(decimations,
                     'D:/DIPLOM/спектры_маг_досл/обновл_спектрХДС/ХДС{0}_децимация.txt'.format(len(source_sig)))
@@ -131,19 +138,20 @@ def test_cds_spectrum():
     pfak_spectrum_info = print_spectrum_info_w_plot('PFAK')
     afak_spectrum_info = print_spectrum_info_w_plot('AFAK')
 
-    # SOURCE CDS
-    # calculate spctrum using pfak list
+    # SOURCE CDS part
+    # Calculate spectrum using PFAK
     freq_pfak, ps_pfak = calculate_spectrum_autocorrel(pfak_list[1:len(pfak_list) - 1], sampling_rate)
-    # calculate spectrum using afak list
+    # Calculate spectrum using AFAK
     freq_afak, ps_afak = calculate_spectrum_autocorrel(afak_list[1:len(afak_list) - 1], sampling_rate)
 
+    # Printing PFAK, AFAK's spectrum info and plot
     print('\nПФАК без учета основных пиков:', pfak_list[1:len(pfak_list) - 1])
     pfak_spectrum_info(freq_pfak,ps_pfak,'Source CDS'+str(len(source_sig)))
     print('\nАФАК без учета основных пиков:', afak_list[1:len(afak_list) - 1])
     afak_spectrum_info(freq_afak,ps_afak,'Source CDS'+str(len(source_sig)))
 
-    # if you need a left part but it make
-    # no sense to use it because its mirrored
+    # Calculating fft of PFAK and AFAK and build plot
+    # this one is optional you can comment this part
     freq_pfak_1, ps_pfak_1, idx_pfak_1 = calculate_spectrum_autocorrel_fft(pfak_list[1:len(pfak_list) - 1],
                                                                            sampling_rate)
     build_spectrum(freq_pfak_1[idx_pfak_1], ps_pfak_1[idx_pfak_1], 'PFAK PSD OF ' + 'Source CDS'+str(len(source_sig)))
@@ -152,29 +160,35 @@ def test_cds_spectrum():
                                                                            sampling_rate)
     build_spectrum(freq_afak_1[idx_afak_1], ps_afak_1[idx_afak_1], 'AFAK PSD OF CS' + 'Source CDS'+str(len(source_sig)))
 
-    # from 1 because the 0th element(decimation coef 1)
+    # DECIMATIONS part
+    # Starting from 1 because the 0th element(decimation coef 1)
     # is the same as the source signal
+    # the finsh point can be set from 1 to len(decimations)
     for i in range(1, 3):
+        # Setting name for the signal that being tested right now
         sigName = 'CDS{0} Decimation Coef.'.format(len(source_sig)) + str(decimations[i][1])
         print('\n' + sigName)
+
+        # Calculate PFAK, AFAK for derivative signal
         pfak_list, afak_list = test_auto_correl(decimations[i][0])
+
+        # Building plot for PFAK and AFAK
         build_plot(pfak_list, 'ПФАК ' + sigName)
         build_plot(afak_list, 'АФАК ' + sigName)
 
-        # calculate spctrum using pfak list
-
+        # Calculate spectrum using PFAK
         freq_pfak, ps_pfak = calculate_spectrum_autocorrel(pfak_list[1:len(pfak_list)-1], sampling_rate)
-        # calculate spectrum using afak list
+        # Calculate spectrum using AFAK
         freq_afak, ps_afak = calculate_spectrum_autocorrel(afak_list[1:len(afak_list) - 1], sampling_rate)
 
-        # printing and build plot
+        # Printing PFAK, AFAK's spectrum info and plot
         print('\nПФАК без учета основных пиков:', pfak_list[1:len(pfak_list) - 1])
         pfak_spectrum_info(freq_pfak, ps_pfak, sigName)
         print('\nАФАК без учета основных пиков:', afak_list[1:len(afak_list) - 1])
         afak_spectrum_info(freq_afak, ps_afak, sigName)
 
-        # if you need a left part but it make
-        # no sense to use it because its mirrored
+        # Calculating fft of PFAK and AFAK and build plot
+        # this one is optional you can comment this part
         freq_pfak_1, ps_pfak_1, idx_pfak_1 = calculate_spectrum_autocorrel_fft(pfak_list[1:len(pfak_list) - 1],
                                                                                sampling_rate)
         build_spectrum(freq_pfak_1[idx_pfak_1], ps_pfak_1[idx_pfak_1], 'PFAK PSD OF ' + sigName)
@@ -198,54 +212,59 @@ def test_derivative_cs_spectrum():
     p = 16
     h = Hadamar(p)
     cs = CryptoSignal(p)
+
     # setting sampling rate
     sampling_rate = 30
-    # Putting function into variable to use it later
+
+    # Init spectrum info function for diffrent modes : PFAK and AFAK
     pfak_spectrum_info = print_spectrum_info_w_plot('PFAK')
     afak_spectrum_info = print_spectrum_info_w_plot('AFAK')
 
-    # creating source signal and hadamard matrix
+    # Generating source signal CS
     source_sig = cs.generateDefRandomSeq(4)
+    # Generating Hadamard Matrix
     hadamar_sig_list = h.getHadamMatrix()
 
-    # writing hadamard matrix into file
+    # Writing hadamard matrix into file
     writeListInFile(hadamar_sig_list, "D:/DIPLOM/спектры_маг_досл/обновл_спектрКСпроизводные/hadamar"
                     + str(p) + ".txt")
-    # derivative
+    # Derivatives formation
     dersig, combinations = derivativeSigFromTo([source_sig], hadamar_sig_list, 1, 4)
 
+    # Printing info about source CS and derivative signals
     print('Исходный сигнал\nCS#0: ', source_sig)
     print('Получаем производные сигналы:')
     print_derivative(dersig, combinations)
 
     for i in range(0,len(dersig)):
+        # Setting name for the derivative signal that being tested right now
         sigName = 'Derivative Signal #'+str(i) \
                   + "\n(CS#{0} and HADAMAR#{1})".format(combinations[i][0], combinations[i][1])
         print('\n'+sigName)
+
+        # Calculate PFAK, AFAK for derivative signal
         pfak_list, afak_list = test_auto_correl(dersig[i])
+
+        # Building plot for PFAK and AFAK
         build_plot(pfak_list, 'ПФАК '+sigName)
         build_plot(afak_list, 'АФАК '+sigName)
 
-
-        # calculate spctrum using pfak list
+        # Calculate spectrum using PFAK
         freq_pfak, ps_pfak = calculate_spectrum_autocorrel(pfak_list[1:len(pfak_list) - 1], sampling_rate)
-        # calculate spectrum using afak list
+        # Calculate spectrum using AFAK
         freq_afak, ps_afak = calculate_spectrum_autocorrel(afak_list[1:len(afak_list) - 1], sampling_rate)
 
-        # printing and build plot
+        # Printing PFAK, AFAK's spectrum info and plot
         print('\nПФАК без учета основных пиков:', pfak_list[1:len(pfak_list) - 1])
         pfak_spectrum_info(freq_pfak,ps_pfak,sigName)
         print('\nАФАК без учета основных пиков:', afak_list[1:len(afak_list) - 1])
         afak_spectrum_info(freq_afak,ps_afak,sigName)
 
-        # build_spectrum_plotly(frequency=freq, power_spectrum=ps,
-        #                       graph_name='../plotly_plots/DERIVATIVE#{0}_{1}_Spectrum'.format(i,len(sig)))
-        # if you need a left part but it make
-        # no sense to use it because its mirrored
+        # Calculating fft of PFAK and AFAK and build plot
+        # this one is optional you can comment this part
         freq_pfak_1, ps_pfak_1, idx_pfak_1 = calculate_spectrum_autocorrel_fft(pfak_list[1:len(pfak_list) - 1],
                                                                                sampling_rate)
         build_spectrum(freq_pfak_1[idx_pfak_1], ps_pfak_1[idx_pfak_1], 'PFAK PSD OF ' + sigName)
-        #
         freq_afak_1, ps_afak_1, idx_afak_1 = calculate_spectrum_autocorrel_fft(afak_list[1:len(pfak_list) - 1],
                                                                                sampling_rate)
         build_spectrum(freq_afak_1[idx_afak_1], ps_afak_1[idx_afak_1], 'AFAK PSD OF ' + sigName)
@@ -256,41 +275,52 @@ def test_derivative_cds_spectrum():
     pfak_spectrum_info = print_spectrum_info_w_plot('PFAK')
     afak_spectrum_info = print_spectrum_info_w_plot('AFAK')
 
+    # Generating CDS
     cds = CDS(257)
     cds.print_general_info()
     cds.print_table()
     source_sig = cds.table[5]
+    # Generating Hadamard Matrix
     h = Hadamar(256)
     hadamar_sig_list = h.getHadamMatrix()
 
+    # Derivatives formation
     dersig, combinations = derivativeSigFromTo([source_sig], hadamar_sig_list, 1, 5)
+
     # setting sampling rate
     sampling_rate = 30
 
+    # Printing info about source CDS and derivative signals
     print('Исходный сигнал\nCDS#0: ', source_sig)
     print('Получаем производные сигналы:')
     print_derivative(dersig, combinations)
 
+    # Starting spectrum calculation
     for i in range(0, len(dersig)):
+        # Setting name for the derivative signal that being tested right now
         sigName = 'Derivative Signal #' + str(i) \
                   + "\n(CDS#{0} and HADAMAR#{1})".format(combinations[i][0], combinations[i][1])
         print(sigName)
 
+        # Calculate PFAK, AFAK for derivative signal
         pfak_list, afak_list = test_auto_correl(dersig[i])
+        # Building plot for PFAK and AFAK
         build_plot(pfak_list, 'ПФАК ' + sigName)
         build_plot(afak_list, 'АФАК ' + sigName)
 
-        # calculate spctrum using pfak list
+        # Calculate spectrum using PFAK
         freq_pfak, ps_pfak = calculate_spectrum_autocorrel(pfak_list[1:len(pfak_list) - 1], sampling_rate)
-        # calculate spectrum using afak list
+        # Calculate spectrum using AFAK
         freq_afak, ps_afak = calculate_spectrum_autocorrel(afak_list[1:len(afak_list) - 1], sampling_rate)
 
-        # printing and build plot
+        # Printing PFAK, AFAK's spectrum info and plot
         print('\nПФАК без учета основных пиков:', pfak_list[1:len(pfak_list) - 1])
         pfak_spectrum_info(freq_pfak, ps_pfak, sigName)
         print('\nАФАК без учета основных пиков:', afak_list[1:len(afak_list) - 1])
         afak_spectrum_info(freq_afak, ps_afak, sigName)
 
+        # Calculating fft of PFAK and AFAK and build plot
+        # this one is optional you can comment this part
         freq_pfak_1, ps_pfak_1, idx_pfak_1 = calculate_spectrum_autocorrel_fft(pfak_list[1:len(pfak_list) - 1],
                                                                                sampling_rate)
         build_spectrum(freq_pfak_1[idx_pfak_1], ps_pfak_1[idx_pfak_1], 'PFAK PSD OF ' + sigName)
@@ -344,13 +374,13 @@ def calculate_spectrum_autocorrel_fft(fak_list, sampling_rate):
 # ========================================================
 
 # ============NOISE============================================
-# as pure signal we use correaltion function
+# as pure signal we use correlation function
 def add_noise(pure):
     # Converting pure (list) to ndarray
     data = np.asarray(pure)
     # Generating noise (normal distributed values from 0 to 1) depends on data length
     noise = np.random.normal(0,1, len(pure))
-    # Adding noise (sum or multipilcation depends on nature of noise)
+    # Adding noise (sum or multiplication depends on nature of noise)
     #  for our model we use sum
     signal = data + noise
 

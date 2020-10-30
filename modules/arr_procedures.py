@@ -9,13 +9,20 @@ from modules.calculations import coprimes, printFullStat, getPair, getMax
 # write string
 
 
-
 def writeListInFile(aList:list,filepath):
     f = open(filepath,"w")
     for i in range(0,len(aList)):
         f.write(str(i)+") "+str(aList[i])+"\n")
-
     f.close()
+
+# writing signals from esnemble to file
+# 1) [1,-1,1..]
+# 2) [1,-1,1..]
+def write_list_to_file(list, filename):
+    with open(filename, 'w') as out:
+        for i in range(0, len(list)):
+            out.write('{0}) {1}\n'.format(str(i),str(list[i].tolist()) ) )
+
 
 # write binary mode
 def writeListInBinFile(aList:list,file_name):

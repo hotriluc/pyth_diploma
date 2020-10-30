@@ -44,10 +44,11 @@ def build_BER(snrindB_range,ber):
 def build_BER_compare(snridB_range, *args):
     fig, ax = plt.subplots()
     marker = itertools.cycle((',', '+', '.', 'o', '*'))
+    name = ['КС','ХДС','АФМ-16']
     i=0
     for set in args:
         # plt.plot(snridB_range, set,label='Set '+str(i))
-        ax.plot(snridB_range, set,marker=next(marker),label='Set '+str(i))
+        ax.plot(snridB_range, set,marker=next(marker),label=name[i])
         i+=1
 
     plt.xlabel('snr(dB)')
@@ -105,4 +106,6 @@ if __name__ == "__main__":
     a = [1,2,3,4,5,6,7,8,9,10]
     cs_ber = [0.05621953125, 0.037604296875, 0.022876171875, 0.012468359375, 0.0059296875, 0.002419140625, 0.000802734375, 0.000205078125, 3.046875e-05, 3.515625e-06]
     cds_ber = [0.056342578125, 0.0375125, 0.02279765625, 0.012490625, 0.005978125, 0.002396875, 0.00077265625, 0.000187890625, 3.515625e-05, 4.6875e-06]
-    build_BER_compare(a,cs_ber,cds_ber)
+    afm_ber = [0.264275, 0.1391, 0.0832, 0.04625, 0.028225, 0.0176, 0.011125, 0.0074, 0.004025, 0.002025]
+
+    build_BER_compare(a,cs_ber,cds_ber,afm_ber)
